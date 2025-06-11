@@ -1,44 +1,48 @@
 <?php
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 require_once 'NumberChecker.php';
 
 class NumberCheckerTests extends TestCase
 {
+
     private $numberChecker;
-    protected function setUp(): void
+
+    #[DataProvider('provideIsEvenCases')]
+    public function testIsEven(int $number, bool $expected): void
     {
-        $this->numberChecker = new NumberChecker(2);
+        $this->numberChecker = new NumberChecker($number);
+        $this->assertSame($expected, $this->numberChecker->isEven());
     }
 
-    public function testEvenWithEvenNumber(): void
+    public static function provideIsEvenCases(): array
     {
-        $this->assertTrue($this->numberChecker->isEven());
-    }
-    public function testIsPositiveWithPositiveNumber(): void
-    {
-        $this->assertTrue($this->numberChecker->isPositive());
+        return [
+            'even number' => [2, true],
+            'odd number' => [3, false],
+            'zero' => [0, true],
+            'negative even' => [-4, true],
+            'negative odd' => [-5, false],
+        ];
     }
 
-    public function testIsEvenWithOddNumber(): void
+    #[DataProvider('provideIsPositiveCases')]
+    public function testIsPositive(int $number, bool $expected): void
     {
-        $this->numberChecker = new NumberChecker(3);
-        $this->assertFalse($this->numberChecker->isEven());
+        $this->numberChecker = new NumberChecker($number);
+        $this->assertSame($expected, $this->numberChecker->isPositive());
     }
-    public function testIsPositiveWithNegativeNumber(): void
+
+    public static function provideIsPositiveCases(): array
     {
-        $this->numberChecker = new NumberChecker((-1));
-        $this->assertFalse($this->numberChecker->isPositive());
-    }
-    public function testIsEvenWithZero(): void
-    {
-        $this->numberChecker = new NumberChecker(0);
-        $this->assertTrue($this->numberChecker->isEven());
-    }
-    public function testIsPositiveWithZero(): void
-    {
-        $this->numberChecker = new NumberChecker(0);
-        $this->assertFalse($this->numberChecker->isPositive());
+        return [
+            'positive number' => [7, true],
+            'negative number' => [-3, false],
+            'zero' => [0, false],
+            'large positive' => [100, true],
+            'large negative' => [-100, false],
+        ];
     }
 }
